@@ -1,0 +1,38 @@
+#!/bin/bash
+## Required PBS Directives --------------------------------------
+#PBS -A ERDCV00898M20
+#PBS -q debug
+#PBS -l select=15:ncpus=44:mpiprocs=44
+#PBS -l walltime=0:20:00
+#PBS -l application=s2g
+#PBS -j oe
+#PBS -M fyshi@udel.edu
+#PBS -m be
+#PBS -N s2g
+
+## Execution Block ----------------------------------------------
+# Environment Setup
+FUNWAVE=${HOME}/USERS_APP/S2G_ship/FUNWAVE-TVD
+EXEC=${FUNWAVE}/bin/funwave_vessel_test
+
+INPUT=${PBS_O_WORKDIR}
+BATHY=${PBS_O_WORKDIR}
+
+# cd to your scratch directory in /work
+RUNDIR=${WORKDIR}/lam_new_blowup_sed
+mkdir -p ${RUNDIR}
+mkdir -p ${RUNDIR}/output
+
+cd ${RUNDIR}
+
+
+## Launching -----------------------------------------------------
+# copy desired/needed files and run the job
+cp ${INPUT}/input.txt ${RUNDIR}/input.txt
+cp ${INPUT}/depth.txt ${RUNDIR}/depth.txt
+cp ${INPUT}/gauges.txt ${RUNDIR}/gauges.txt
+cp ${INPUT}/vessel_00001 ${RUNDIR}/output/vessel_00001
+# The following two lines provide an example of setting up and running 
+# a CRAY MPICH parallel code  built with the INTEL compiler.
+module swap PrgEnv-cray PrgEnv-intel
+aprun -n 660 ${EXEC}
